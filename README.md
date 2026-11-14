@@ -41,10 +41,12 @@ qrbtf 分两部分：AI 生成（G1）要联网跑它家的训练模型，离线
 
 ## AI 生图那一半
 
-见 `ai-qr-two-ways.html`，两种方案：
+见 `ai-qr-two-ways.html`，两种方案，**点一张卡就能选**：
 
 - **A · 内置免费 AI 生图**：浏览器里调免费接口生背景图，参数化二维码贴上去，10–30 秒/张，保底能扫
 - **B · 本地慢速生成**：Stable Diffusion + ControlNet QR，在 Kaggle 双 T4 / Colab T4 免费 GPU 上跑，图本身就是码，2–5 分钟/张，效果最好
+
+B 的安装包在 `installer/` 里：`qr-art-installer.zip`，解压后双击 `setup.bat`（Windows）或跑 `bash setup.sh`（Mac/Linux）。**安装包不含大模型**，模型在安装时从 HuggingFace 下载（SD 1.5 + ControlNet QR，fp16 约 3GB，2026-11-15 核实不用授权、不用 token），先跑 `python download_models.py --check` 可以只核查不下载。
 
 ## 文件
 
