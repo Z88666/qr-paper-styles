@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AI 艺术二维码 · 两种做法（二选一）</title>
+<style>
+* { box-sizing: border-box; }
+body { margin: 0; background: #f4f1ea; color: #222; font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; }
+.wrap { max-width: 600px; margin: 0 auto; padding: 16px 14px 40px; }
+h1 { font-size: 22px; margin: 6px 0 2px; }
+.sub { font-size: 13px; color: #666; margin: 0 0 14px; line-height: 1.6; }
+h2 { font-size: 17px; margin: 0 0 4px; }
+.tag { display: inline-block; font-size: 12px; background: #111; color: #fff; border-radius: 20px; padding: 2px 10px; margin-bottom: 8px; }
+.tag.b { background: #1e3a8a; }
+.card { background: #fff; border: 2px solid #ccc; border-radius: 14px; padding: 16px; margin-top: 14px; cursor: pointer; position: relative; }
+.card.b { border-color: #ccc; }
+.card.on { border-color: #111; box-shadow: 0 0 0 3px #111 inset; }
+.card.b.on { border-color: #1e3a8a; box-shadow: 0 0 0 3px #1e3a8a inset; }
+.picked { display: none; position: absolute; top: 12px; right: 12px; background: #1a7a3a; color: #fff; font-size: 12px; border-radius: 20px; padding: 3px 10px; }
+.card.on .picked { display: block; }
+.styles3 { display: flex; gap: 8px; margin: 10px 0 4px; }
+.styles3 img { width: 33%; height: 92px; object-fit: cover; object-position: top center; border-radius: 8px; display: block; }
+.styles3 div { width: 33%; text-align: center; font-size: 12px; color: #555; }
+.flow { background: #f4f1ea; border-radius: 10px; padding: 10px 12px; font-size: 13px; line-height: 2; margin: 10px 0; }
+.flow b { background: #fff; border: 1px solid #bbb; border-radius: 6px; padding: 1px 7px; margin: 0 1px; }
+.bar-row { display: flex; align-items: center; font-size: 13px; margin: 7px 0; }
+.bar-row span:first-child { width: 74px; color: #555; }
+.bar { flex: 1; height: 10px; background: #eee; border-radius: 6px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: #111; }
+.card.b .bar i { background: #1e3a8a; }
+.bar-row b { width: 86px; text-align: right; font-size: 12px; }
+ul { font-size: 13px; line-height: 1.8; margin: 8px 0 4px; padding-left: 18px; }
+.good { color: #1a7a3a; } .bad { color: #b3122e; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 14px; background: #fff; }
+th, td { border: 1px solid #ddd; padding: 8px 6px; text-align: center; line-height: 1.5; }
+th { background: #111; color: #fff; }
+td:first-child { text-align: left; color: #555; width: 76px; }
+#choice { margin-top: 16px; border-radius: 12px; padding: 14px; font-size: 14px; line-height: 1.8; text-align: center; background: #fff; border: 2px dashed #999; color: #555; }
+#choice.on-a { background: #111; color: #fff; border: 2px solid #111; }
+#choice.on-b { background: #1e3a8a; color: #fff; border: 2px solid #1e3a8a; }
+#choice a { color: #ffd75e; }
+.note { font-size: 12px; color: #777; line-height: 1.7; margin-top: 16px; }
+.dl { display: inline-block; margin-top: 8px; font-size: 14px; background: #1e3a8a; color: #fff; border-radius: 8px; padding: 8px 14px; text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>AI 艺术二维码 · 两种做法</h1>
+  <p class="sub">目标风格就是你发的 3 张图。底座已经做好了：参数化二维码离线版，3 种风格 × 3 种内容，ZXing 实测 9/9 能扫（含中文）。<br><b>点一张卡选一个方案</b>，下面会告诉你选完之后怎么做。</p>
+
+  <div class="styles3">
+    <div><img src="__THUMB1__" alt="银白纸雕"><br>银白纸雕</div>
+    <div><img src="__THUMB2__" alt="蓝金纸花"><br>蓝金纸花</div>
+    <div><img src="__THUMB3__" alt="黑白花嫁"><br>黑白花嫁</div>
+  </div>
+
+  <div class="card" id="cardA" onclick="pick('A')">
+    <span class="picked">✓ 已选</span>
+    <span class="tag">方案 A</span>
+    <h2>风格原图打底</h2>
+    <div style="font-size:13px;color:#555;">在网页里直接点“生成”，图当场出来，不用装东西。</div>
+    <div class="flow"><b>输入文字</b> → <b>选风格</b> → <b>原图做底</b> → <b>参数化二维码贴上去</b> → <b>下载</b></div>
+    <div class="bar-row"><span>速度</span><div class="bar"><i style="width:98%"></i></div><b>约 1 秒/张</b></div>
+    <div class="bar-row"><span>效果</span><div class="bar"><i style="width:60%"></i></div><b>图和码是两层</b></div>
+    <div class="bar-row"><span>费用</span><div class="bar"><i style="width:100%"></i></div><b>$0，不用注册</b></div>
+    <div class="bar-row"><span>上手</span><div class="bar"><i style="width:95%"></i></div><b>打开就能用</b></div>
+    <ul>
+      <li class="good">✓ 不用 key、不用联网、没有水印，底图就是你上传的 3 张原图</li>
+      <li class="good">✓ 码是已验证的参数化二维码，能扫是保底的</li>
+      <li class="good">✓ 码卡片用风格底色、带阴影，放在原图中间，看着是一体的</li>
+      <li class="bad">× 同一风格每次都是同一张底，换底得用 B</li>
+      <li class="bad">× 银白纸雕那张原图是截屏，已裁掉界面文字只留画面，图小、放大后会糊一点</li>
+      <li class="bad">× 不是 qrbtf G1 那种图码一体，图只是背景，融合感弱一档</li>
+    </ul>
+  </div>
+
+  <div class="card b" id="cardB" onclick="pick('B')">
+    <span class="picked">✓ 已选</span>
+    <span class="tag b">方案 B</span>
+    <h2>本地慢速生成</h2>
+    <div style="font-size:13px;color:#555;">Stable Diffusion + ControlNet 二维码模型，在免费 GPU 上跑，图本身就是码。</div>
+    <div class="flow"><b>下载安装包</b> → <b>一键安装（自动下载模型约 3GB）</b> → <b>码图 + 风格提示词</b> → <b>生成图码一体</b> → <b>人工验扫</b></div>
+    <div class="bar-row"><span>速度</span><div class="bar"><i style="width:30%"></i></div><b>T4 约 2–5 分钟/张</b></div>
+    <div class="bar-row"><span>效果</span><div class="bar"><i style="width:95%"></i></div><b>图就是码，最像原图</b></div>
+    <div class="bar-row"><span>费用</span><div class="bar"><i style="width:100%"></i></div><b>$0，Kaggle 每周 30h</b></div>
+    <div class="bar-row"><span>上手</span><div class="bar"><i style="width:35%"></i></div><b>首次安装约 1 小时</b></div>
+    <ul>
+      <li class="good">✓ 真·图码一体（ControlNet QR），和你发的 3 张图最接近</li>
+      <li class="good">✓ 安装包不含大模型，安装时才从 HuggingFace 下载（SD 1.5 + ControlNet，fp16 约 3GB），包本身只有几十 KB</li>
+      <li class="good">✓ 模型下好后可以断网出图，不经过任何第三方</li>
+      <li class="bad">× 慢：T4 一张 2–5 分钟，Windows 纯 CPU 要 20–60 分钟，不推荐</li>
+      <li class="bad">× 首次安装要下载约 3GB 模型 + 约 2.5GB 运行库，硬盘至少留 12GB</li>
+      <li class="bad">× 要抽卡：不是每张都能扫，每张都要验扫才算数</li>
+    </ul>
+    <a class="dl" href="installer/qr-art-installer.zip">下载安装包 qr-art-installer.zip</a>
+    <div style="font-size:12px;color:#777;margin-top:6px;">Windows 双击 setup.bat，Mac / Linux 跑 setup.sh；模型在安装时自动下载。</div>
+  </div>
+
+  <table>
+    <tr><th></th><th>方案 A · 原图打底</th><th>方案 B · 本地慢速</th></tr>
+    <tr><td>费用</td><td>$0 免注册</td><td>$0 免费 GPU</td></tr>
+    <tr><td>一张多久</td><td>约 1 秒</td><td>2–5 分钟（T4）</td></tr>
+    <tr><td>效果</td><td>背景图 + 码</td><td>图就是码</td></tr>
+    <tr><td>联网</td><td>不用</td><td>模型下好后不用</td></tr>
+    <tr><td>能扫</td><td>保底能扫</td><td>每张都要验</td></tr>
+    <tr><td>适合</td><td>马上玩、要快</td><td>要效果、像原图</td></tr>
+  </table>
+
+  <div id="choice">点上面一张卡选一个方案。</div>
+  <div style="font-size:12px;color:#999;text-align:center;margin-top:8px;">v3 · 点卡可选</div>
+
+  <div class="note">诚实说明：qrbtf 的 G1 是它家自己训的模型，不开源，离线复刻不了。A 用的是你上传的 3 张原图做底 + 参数化码，B 用的是公开 ControlNet QR 模型（DionTimmer），是目前能免费拿到的最接近 G1 的做法。两个方案都不用绑卡、不用实名。SD 1.5 已改到 stable-diffusion-v1-5/stable-diffusion-v1-5，不用授权、不用 token 就能下（2026-11-15 核实）。银白纸雕那款是白底深底反色码：微信和安卓能扫，iPhone 自带相机可能扫不出，用微信扫最稳。</div>
+</div>
+<script>
+var choice = document.getElementById("choice");
+var cardA = document.getElementById("cardA");
+var cardB = document.getElementById("cardB");
+function pick(which) {
+  cardA.className = "card" + (which === "A" ? " on" : "");
+  cardB.className = "card b" + (which === "B" ? " on" : "");
+  if (which === "A") {
+    choice.className = "on-a";
+    choice.innerHTML = "已选 A：风格原图打底<br><a href=\"ai-generate.html\">点这里打开 A 生成页</a>，输入文字、选风格、点生成，不用装东西。";
+  } else {
+    choice.className = "on-b";
+    choice.innerHTML = "已选 B：本地慢速生成<br>下一步：<a href=\"installer/qr-art-installer.zip\">下载安装包</a>，按里面的 README 装，模型在安装时自动下载。";
+  }
+}
+cardA.addEventListener("click", function () { pick("A"); });
+cardB.addEventListener("click", function () { pick("B"); });
+</script>
+</body>
+</html>
