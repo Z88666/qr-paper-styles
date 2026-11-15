@@ -38,7 +38,7 @@ button.blue { background: #1e3a8a; border-color: #1e3a8a; }
 <body>
 <div class="wrap">
   <h1>AI 艺术二维码 · 方案 A</h1>
-  <p class="sub">免费 AI 生背景图，再把已验证的参数化二维码贴上去。打开就能用，不用注册、不用装东西。<br><a href="ai-qr-two-ways.html">← 回到两种做法</a> ｜ <a href="index.html">离线参数化版（断网可用）</a></p>
+  <p class="sub">背景就是你上传的 3 张风格原图，再把已验证的参数化二维码画上去。打开就能用，不用注册、不用联网、没有水印。<br><a href="ai-qr-two-ways.html">← 回到两种做法</a> ｜ <a href="index.html">离线参数化版（断网可用）</a></p>
 
   <label>内容（链接 / 文字）</label>
   <textarea id="text">https://qrbtf.com</textarea>
@@ -65,8 +65,8 @@ button.blue { background: #1e3a8a; border-color: #1e3a8a; }
   <button id="dlBtn" class="blue" style="display:none;">下载图片</button>
 
   <div class="note">
-    <b>怎么做的：</b>背景图由免费接口 Pollinations 现场生成（不用 key、不用绑卡），二维码是离线工具里同一套参数化渲染（Nayuki 编码器，中文加 ECI 26），定位角标准 7×7，H 级纠错，码贴在不透明的底色卡片上，背景图碰不到码的本体，所以能扫是保底的。<br><br>
-    <b>再点一次“生成”会换一张背景图。</b>免费接口不限量也没保证，偶尔会变慢或限流，失败了点重试。断网时用<a href="index.html">离线参数化版</a>。
+    <b>怎么做的：</b>背景就是你上传的 3 张风格原图（styles/ 里的本地文件，不用联网、没有水印），二维码是离线工具里同一套参数化渲染（Nayuki 编码器，中文加 ECI 26），定位角标准 7×7，H 级纠错，码画在风格底色的卡片上、卡片再放在原图中间，背景碰不到码的本体，所以能扫是保底的。<br><br>
+    同一风格每次生成都是同一张底图。想换一张底、让码真正融进画里，得用 B 方案（ControlNet 真生图）。断网时用<a href="index.html">离线参数化版</a>。
   </div>
 </div>
 
@@ -916,20 +916,15 @@ var qrcodegen;
 var ALIGN_TABLE = [[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]];
 
 var STYLES = [
-  { id: "papercut", name: "银白纸雕", bg: "#191920", fg: "#f4f1e8", fg2: "#c9ced8", accent: "#9fb2cc",
+  { id: "papercut", name: "银白纸雕", ref: "styles/ref-papercut.jpg", bg: "#191920", fg: "#f4f1e8", fg2: "#c9ced8", accent: "#9fb2cc",
     frame: "#f4f1e8", module: "circle", mscale: 0.92, finder: "petal" },
-  { id: "paperflower", name: "蓝金纸花", bg: "#fff8ea", fg: "#1e3a8a", fg2: "#27408b", accent: "#c1272d",
+  { id: "paperflower", name: "蓝金纸花", ref: "styles/ref-b2ed.jpg", bg: "#fff8ea", fg: "#1e3a8a", fg2: "#27408b", accent: "#c1272d",
     frame: "#c9a227", module: "diamond", mscale: 0.92, finder: "gold" },
-  { id: "bridal", name: "黑白花嫁", bg: "#ffffff", fg: "#141414", fg2: "#141414", accent: "#b3122e",
+  { id: "bridal", name: "黑白花嫁", ref: "styles/ref-5c17.jpg", bg: "#ffffff", fg: "#141414", fg2: "#141414", accent: "#b3122e",
     frame: "#141414", module: "circle", mscale: 0.92, finder: "lace" }
 ];
 
-/* 各风格的英文生图提示词（按用户给的 3 张图写，明确不要出现文字和二维码图案） */
-var PROMPTS = [
-  "Delicate white paper-cut art, a beautiful young woman with long silver-white hair, white paper strips and white paper flowers on a deep dark navy background, intricate layered papercraft, soft elegant lighting, high detail, no text, no QR code",
-  "Luxurious royal blue paper flower art, layered paper roses in deep red with thin gold outlines and gold foil details on a rich royal blue background, ornate elegant papercraft, high detail, no text, no QR code",
-  "Black and white bridal paper art, black paper flowers and delicate white lace, a bride in a white veil, a few scattered red flower petals as the only accent, monochrome elegant papercraft, high detail, no text, no QR code"
-];
+/* v2：背景不再找免费接口生图，直接用用户上传的 3 张风格原图（STYLES 里的 ref，styles/ 本地文件） */
 
 var curStyle = 0;
 var lastDataUrl = "";
@@ -1078,7 +1073,7 @@ function drawCanvas(cv, b, px) {
   }
 }
 
-/* ===== 方案 A：AI 生背景图 + 参数化二维码合成 ===== */
+/* ===== 方案 A v2：风格原图打底 + 参数化二维码合成 ===== */
 var QR_PX = 680; /* 码卡片边长（整图 1024，上下左右各留 172 背景） */
 
 function $(id) { return document.getElementById(id); }
@@ -1098,6 +1093,23 @@ function showError(msg) {
   $("retryBtn").style.display = "inline-block";
 }
 
+function drawCover(ctx, img, S) {
+  var iw = img.naturalWidth, ih = img.naturalHeight;
+  var s = Math.max(S / iw, S / ih);
+  var w = iw * s, h = ih * s;
+  ctx.drawImage(img, (S - w) / 2, (S - h) / 2, w, h);
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
 function composite(bgImg, b, st) {
   var cv = $("cv");
   if (!cv || !cv.getContext) {
@@ -1106,19 +1118,31 @@ function composite(bgImg, b, st) {
   }
   cv.width = 1024; cv.height = 1024;
   var ctx = cv.getContext("2d");
-  ctx.drawImage(bgImg, 0, 0, 1024, 1024);
+  drawCover(ctx, bgImg, 1024);
   var off = document.createElement("canvas");
   drawCanvas(off, b, QR_PX);
+  var pad = 28;
+  var panel = QR_PX + pad * 2;
   var xy = (1024 - QR_PX) / 2;
+  var px0 = xy - pad, py0 = xy - pad;
+  ctx.save();
+  ctx.shadowColor = "rgba(0,0,0,0.35)";
+  ctx.shadowBlur = 24;
+  ctx.shadowOffsetY = 8;
+  ctx.fillStyle = st.bg;
+  roundRect(ctx, px0, py0, panel, panel, 18);
+  ctx.fill();
+  ctx.restore();
   ctx.drawImage(off, xy, xy);
   ctx.strokeStyle = st.frame;
   ctx.lineWidth = 6;
-  ctx.strokeRect(xy + 3, xy + 3, QR_PX - 6, QR_PX - 6);
+  roundRect(ctx, px0 + 3, py0 + 3, panel - 6, panel - 6, 15);
+  ctx.stroke();
   var url;
   try {
     url = cv.toDataURL("image/png");
   } catch (e) {
-    showError("图片导出失败（浏览器拦截了跨域图片），点重试再试一次。");
+    showError("图片导出失败，刷新页面再试一次。");
     return;
   }
   lastDataUrl = url;
@@ -1143,23 +1167,9 @@ function generate() {
   $("genBtn").innerHTML = "生成中…";
   $("err").innerHTML = "";
   $("retryBtn").style.display = "none";
-  var seed = Math.floor(Math.random() * 100000);
-  var url = "https://image.pollinations.ai/prompt/" + encodeURIComponent(PROMPTS[curStyle]) +
-    "?width=1024&height=1024&nologo=true&seed=" + seed;
-  var start = new Date().getTime();
-  $("status").innerHTML = "正在生图，10–30 秒…（已等 0 秒）";
-  ticker = setInterval(function () {
-    var s = Math.floor((new Date().getTime() - start) / 1000);
-    $("status").innerHTML = "正在生图，10–30 秒…（已等 " + s + " 秒）";
-  }, 1000);
-  timer60 = setTimeout(function () {
-    img.src = "";
-    showError("生图超时（60 秒没回来），免费接口可能在排队，点重试再试一次。");
-  }, 60000);
+  $("status").innerHTML = "正在画图…";
   var img = new Image();
-  img.crossOrigin = "anonymous";
   img.onload = function () {
-    clearTimers();
     busy = false;
     $("genBtn").disabled = false;
     $("genBtn").innerHTML = "生成";
@@ -1168,9 +1178,9 @@ function generate() {
     composite(img, b, st);
   };
   img.onerror = function () {
-    showError("生图失败（免费接口没返回图片），点重试再试一次；断网时用离线参数化版。");
+    showError("风格原图没载入（" + st.ref + " 缺失），刷新页面再试一次。");
   };
-  img.src = url;
+  img.src = st.ref;
 }
 
 $("genBtn").addEventListener("click", generate);
