@@ -58,19 +58,19 @@ td:first-child { text-align: left; color: #555; width: 76px; }
   <div class="card" id="cardA" onclick="pick('A')">
     <span class="picked">✓ 已选</span>
     <span class="tag">方案 A</span>
-    <h2>内置免费 AI 生图</h2>
+    <h2>风格原图打底</h2>
     <div style="font-size:13px;color:#555;">在网页里直接点“生成”，图当场出来，不用装东西。</div>
-    <div class="flow"><b>输入文字</b> → <b>选风格</b> → <b>免费 AI 生背景图</b> → <b>参数化二维码贴上去</b> → <b>下载</b></div>
-    <div class="bar-row"><span>速度</span><div class="bar"><i style="width:88%"></i></div><b>约 10–30 秒/张</b></div>
+    <div class="flow"><b>输入文字</b> → <b>选风格</b> → <b>原图做底</b> → <b>参数化二维码贴上去</b> → <b>下载</b></div>
+    <div class="bar-row"><span>速度</span><div class="bar"><i style="width:98%"></i></div><b>约 1 秒/张</b></div>
     <div class="bar-row"><span>效果</span><div class="bar"><i style="width:60%"></i></div><b>图和码是两层</b></div>
     <div class="bar-row"><span>费用</span><div class="bar"><i style="width:100%"></i></div><b>$0，不用注册</b></div>
     <div class="bar-row"><span>上手</span><div class="bar"><i style="width:95%"></i></div><b>打开就能用</b></div>
     <ul>
-      <li class="good">✓ 免费接口不用 key、不用绑卡（Pollinations），浏览器里直接调</li>
+      <li class="good">✓ 不用 key、不用联网、没有水印，底图就是你上传的 3 张原图</li>
       <li class="good">✓ 码是已验证的参数化二维码，能扫是保底的</li>
-      <li class="good">✓ 3 种风格的提示词我按你给的图写好，点一下就行</li>
-      <li class="bad">× 要联网，断网只能用参数化那版</li>
-      <li class="bad">× 免费接口不限量也没保证，可能变慢、限流</li>
+      <li class="good">✓ 码卡片用风格底色、带阴影，放在原图中间，看着是一体的</li>
+      <li class="bad">× 同一风格每次都是同一张底，换底得用 B</li>
+      <li class="bad">× 银白纸雕那张原图是截屏，已裁掉界面文字只留画面，图小、放大后会糊一点</li>
       <li class="bad">× 不是 qrbtf G1 那种图码一体，图只是背景，融合感弱一档</li>
     </ul>
   </div>
@@ -98,19 +98,19 @@ td:first-child { text-align: left; color: #555; width: 76px; }
   </div>
 
   <table>
-    <tr><th></th><th>方案 A · 内置免费</th><th>方案 B · 本地慢速</th></tr>
+    <tr><th></th><th>方案 A · 原图打底</th><th>方案 B · 本地慢速</th></tr>
     <tr><td>费用</td><td>$0 免注册</td><td>$0 免费 GPU</td></tr>
-    <tr><td>一张多久</td><td>10–30 秒</td><td>2–5 分钟（T4）</td></tr>
+    <tr><td>一张多久</td><td>约 1 秒</td><td>2–5 分钟（T4）</td></tr>
     <tr><td>效果</td><td>背景图 + 码</td><td>图就是码</td></tr>
-    <tr><td>联网</td><td>每次都要</td><td>模型下好后不用</td></tr>
+    <tr><td>联网</td><td>不用</td><td>模型下好后不用</td></tr>
     <tr><td>能扫</td><td>保底能扫</td><td>每张都要验</td></tr>
     <tr><td>适合</td><td>马上玩、要快</td><td>要效果、像原图</td></tr>
   </table>
 
   <div id="choice">点上面一张卡选一个方案。</div>
-  <div style="font-size:12px;color:#999;text-align:center;margin-top:8px;">v2 · 点卡可选</div>
+  <div style="font-size:12px;color:#999;text-align:center;margin-top:8px;">v3 · 点卡可选</div>
 
-  <div class="note">诚实说明：qrbtf 的 G1 是它家自己训的模型，不开源，离线复刻不了。A 用的是公开免费生图接口做背景融合，B 用的是公开 ControlNet QR 模型（DionTimmer），是目前能免费拿到的最接近 G1 的做法。两个方案都不用绑卡、不用实名。SD 1.5 已改到 stable-diffusion-v1-5/stable-diffusion-v1-5，不用授权、不用 token 就能下（2026-11-15 核实）。银白纸雕那款是白底深底反色码：微信和安卓能扫，iPhone 自带相机可能扫不出，用微信扫最稳。</div>
+  <div class="note">诚实说明：qrbtf 的 G1 是它家自己训的模型，不开源，离线复刻不了。A 用的是你上传的 3 张原图做底 + 参数化码，B 用的是公开 ControlNet QR 模型（DionTimmer），是目前能免费拿到的最接近 G1 的做法。两个方案都不用绑卡、不用实名。SD 1.5 已改到 stable-diffusion-v1-5/stable-diffusion-v1-5，不用授权、不用 token 就能下（2026-11-15 核实）。银白纸雕那款是白底深底反色码：微信和安卓能扫，iPhone 自带相机可能扫不出，用微信扫最稳。</div>
 </div>
 <script>
 var choice = document.getElementById("choice");
@@ -121,7 +121,7 @@ function pick(which) {
   cardB.className = "card b" + (which === "B" ? " on" : "");
   if (which === "A") {
     choice.className = "on-a";
-    choice.innerHTML = "已选 A：内置免费 AI 生图<br><a href=\"ai-generate.html\">点这里打开 A 生成页</a>，输入文字、选风格、点生成，不用装东西。";
+    choice.innerHTML = "已选 A：风格原图打底<br><a href=\"ai-generate.html\">点这里打开 A 生成页</a>，输入文字、选风格、点生成，不用装东西。";
   } else {
     choice.className = "on-b";
     choice.innerHTML = "已选 B：本地慢速生成<br>下一步：<a href=\"installer/qr-art-installer.zip\">下载安装包</a>，按里面的 README 装，模型在安装时自动下载。";
